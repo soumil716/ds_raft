@@ -11,7 +11,7 @@
      container_name: Node1
      build: Node/.
      environment:
-      - leader=${leader:-True}
+      # - leader=${leader:-True}
       - sender=${sender:-node1}
       - target1=${target1:-node2}
       - target2=${target2:-node3}
@@ -22,24 +22,24 @@
      container_name : Node2
      build: Node/.
      environment:
-      - leader=${leader:-False}
+      # - leader=${leader:-False}
       - sender=${sender:-node2}
       - target1=${target1:-node1}
       - target2=${target2:-node3}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-324}
+      - timeout=${timeout:-4000}
    node3:
      container_name : Node3
      build: Node/.
      environment:
-      - leader=${leader:-False}
+      # - leader=${leader:-False}
       - sender=${sender:-node3}
       - target1=${target1:-node1}
       - target2=${target2:-node2}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-375}
+      - timeout=${timeout:-5000}
 
 
    #Do not change the part below
