@@ -4,14 +4,14 @@ import traceback
 import time
 
 # Wait following seconds below sending the controller request
-time.sleep(5)
+time.sleep(20)
 
 # Read Message Template
 msg = json.load(open("Message.json"))
 
 # Initialize
 sender = "Controller"
-target = "Node1"
+target = "node1"
 port = 5555
 
 # Request

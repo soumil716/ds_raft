@@ -1,4 +1,5 @@
 # from tarfile import _Bz2ReadableFileobj
+from math import fabs
 import time
 import socket
 import json
@@ -33,28 +34,6 @@ class Server:
         self.sentVoteRequest=False
         self.leaderElected=False
 
-    # def create_msg(self,counter):
-    #     msg = {"msg": f"Hi, I am "+os.environ['sender'], "counter":counter}
-    #     msg_bytes = json.dumps(msg).encode()
-    #     return msg_bytes
-
-    # def send_msg(self,i):
-    #     print("started send_msg function")
-    #     while True:
-    #         i+=1
-    #         node1_msg_bytes = self.create_msg(i)
-    #         self.UDP_Socket.sendto(node1_msg_bytes, (os.environ['target1'], 5555))
-    #         self.UDP_Socket.sendto(node1_msg_bytes, (os.environ['target2'], 5555))
-    #         if i>10:
-    #             break
-    #         # Timer(90, self.send_msg,args=[i]).start()
-    #         # time.sleep(1)
-        
-
-           
-
-        # print("All messages were sent")
-        # print("Ending "+os.environ['sender'])
     def listener(self):
         print(f"Starting Listener ")
         # while True:
@@ -74,22 +53,12 @@ class Server:
             start_time=time.time()
             self.process_msgs({})
 
-
-
-            # print(f"Message Received : {decoded_msg} From : {addr}")
-
-            # if decoded_msg['counter']>=10:
-            #     break
-
         print("Exiting Listener Function")
 
     # Heartbeats
     def appendRPC(self,msg):
-        # print(os.environ['leader'])
-        # if self.currentState=='leader':
-        # print(msg,type(msg) ," in appendRPC")
+
         if self.currentState=="leader":
-            # time.sleep(30)
             while True:
                 msg1 = {"msg":os.environ['sender'],"heartbeat":self.heartbeat,"timeout":self.timeout}
                 msg_bytes = json.dumps(msg1).encode()
@@ -98,10 +67,6 @@ class Server:
                     self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
                 except:
                      print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-                # if i>10:
-                #     break
-                # Timer(100, self.appendRPC,args=[i]).start()
-            # time.sleep(1)
         elif self.currentState=="candidate" and ('Term' in msg):
             # print(msg)
             msg_bytes = json.dumps(msg).encode()
@@ -130,41 +95,10 @@ class Server:
                 print("elected leader and intimating to "+os.environ['target1']+" and "+os.environ['target2']+ " and the current state is"+self.currentState)
             except:
                  print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-            # msg1 = {"msg":os.environ['sender'],"heartbeat":self.heartbeat,"timeout":self.timeout}
-            # msg_bytes = json.dumps(msg1).encode()
             self.appendRPC({})
-        # else:
-        #     msg_bytes = json.dumps(msg).encode()
-        #     try:
-        #         self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
-        #         self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
-        #         print("sending  "+os.environ['target1']+" and "+os.environ['target2'])
-        #     except:
-        #          print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-
 
     def process_msgs(self,msg):
         print(msg)
-        # time.time() < timeout_start + timeout:
-        # print(self.timeout,msg)
-        # while self.timeout>0 and self.currentState!='leader':
-        # if len(msg)==0:
-        # start_time=time.time()
-        # while time.time()<(start_time+self.timeout):
-        #     # print(msg," indide while of process_msgs block")
-        #     try:
-        #         msg, addr = self.UDP_Socket.recvfrom(1024)
-        #     except:
-        #         print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-
-        #     if len(msg)!=0:
-        #         self.msg_received=True
-        #         break
-        #     # Decoding the Message received from Node 1
-    
-        #         # self.listener()
-                
-        # if self.timeout==0 and len(msg)==0 and 'Term' not in msg and 'votedFor' not in msg and 'Elected_leader' not in msg:
         if len(msg)==0:
             print("changing state to candidate")
             self.currentTerm+=1
@@ -192,6 +126,7 @@ class Server:
                 self.timeout=int(os.environ['timeout'])
                 self.leaderElected=True
                 msg={'Elected_leader':self.candidateId,'votes':self.vote}
+                # self.voted=False
                 self.appendRPC(msg)
             else:
                 print("else in counting votes")
@@ -200,11 +135,11 @@ class Server:
             print("elected node")
             self.currentState="follower"
             self.leaderElected=True
-            # self.timeout=int(os.environ['timeout'])
-
-        # if 'heartbeat' in 
-        # if 'sender_name' in msg and msg['sender_name']=='Controller':
-        #     self.currentState="Follower"
+            self.voted=False
+        if 'sender_name' in msg and msg['sender_name']=='Controller':
+            print('Inside Controller')
+            self.currentState="follower"
+            self.appendRPC({})
 
 if __name__ == "__main__":
     print("Starting"+os.environ['sender'])
