@@ -10,8 +10,15 @@ import json
 import traceback
 from threading import Timer
 
+class Message:
+    def __init__(self) -> None:
+        self.msg={}
+    def setMsg(self,msg):
+        self.msg=msg
+    def getMsg(self):
+        return self.setMsg
 class Server:
-    def __init__(self,UDP_Socket) -> None:
+    def __init__(self,UDP_Socket,) -> None:
         
         self.UDP_Socket=UDP_Socket
         self.currentTerm=0
@@ -50,18 +57,24 @@ class Server:
         # print("Ending "+os.environ['sender'])
     def listener(self):
         print(f"Starting Listener ")
-        while True:
-            msg={}
+        # while True:
+        start_time=time.time()
+        decoded_msg={}
+        while time.time()<(start_time+self.timeout):
             try:
                 msg, addr = self.UDP_Socket.recvfrom(1024)
+                start_time=time.time()
             except:
                 print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-
-            # Decoding the Message received from Node 1
             decoded_msg = json.loads(msg.decode('utf-8'))
             print("listner ",decoded_msg)
             self.process_msgs(decoded_msg)
             
+        if len(msg)==0:
+            start_time=time.time()
+            self.process_msgs({})
+
+
 
             # print(f"Message Received : {decoded_msg} From : {addr}")
 
@@ -117,6 +130,9 @@ class Server:
                 print("elected leader and intimating to "+os.environ['target1']+" and "+os.environ['target2']+ " and the current state is"+self.currentState)
             except:
                  print(f"ERROR while fetching from socket : {traceback.print_exc()}")
+            # msg1 = {"msg":os.environ['sender'],"heartbeat":self.heartbeat,"timeout":self.timeout}
+            # msg_bytes = json.dumps(msg1).encode()
+            self.appendRPC({})
         # else:
         #     msg_bytes = json.dumps(msg).encode()
         #     try:
@@ -129,27 +145,27 @@ class Server:
 
     def process_msgs(self,msg):
         print(msg)
+        # time.time() < timeout_start + timeout:
         # print(self.timeout,msg)
-        while self.timeout>0 and self.currentState!='leader':
-            # print(msg," indide while of process_msgs block")
-            try:
-                msg, addr = self.UDP_Socket.recvfrom(1024)
-            except:
-                print(f"ERROR while fetching from socket : {traceback.print_exc()}")
+        # while self.timeout>0 and self.currentState!='leader':
+        # if len(msg)==0:
+        # start_time=time.time()
+        # while time.time()<(start_time+self.timeout):
+        #     # print(msg," indide while of process_msgs block")
+        #     try:
+        #         msg, addr = self.UDP_Socket.recvfrom(1024)
+        #     except:
+        #         print(f"ERROR while fetching from socket : {traceback.print_exc()}")
 
-            # Decoding the Message received from Node 1
-            decoded_msg = json.loads(msg.decode('utf-8'))
-            print(decoded_msg," indide while of process_msgs block")
-            if len(decoded_msg)!=0:
-                self.timeout=int(os.environ['timeout'])
-                # print(msg)
-                break
-            else:
-                self.timeout-=1
-                # self.listener()
+        #     if len(msg)!=0:
+        #         self.msg_received=True
+        #         break
+        #     # Decoding the Message received from Node 1
+    
+        #         # self.listener()
                 
         # if self.timeout==0 and len(msg)==0 and 'Term' not in msg and 'votedFor' not in msg and 'Elected_leader' not in msg:
-        if self.timeout<=0 and not self.sentVoteRequest:
+        if len(msg)==0:
             print("changing state to candidate")
             self.currentTerm+=1
             self.currentState="candidate"
@@ -160,11 +176,11 @@ class Server:
         
         # print(self.currentTerm)
 
-        if not self.voted and ('Term'in msg and msg['Term']>self.currentTerm) and self.currentState!="leader" and self.candidateId!=msg['candidateId']:
+        if not self.voted and ('Term'in msg and msg['Term']>self.currentTerm-1) and self.currentState!="leader" and self.candidateId!=msg['candidateId']:
             print("voting phase",msg)
             self.votedFor=msg['candidateId']
             msg={"votedFor":self.votedFor}
-            # self.voted=True
+            self.voted=True
             self.appendRPC(msg)
 
         if 'votedFor' in msg and msg['votedFor']==self.candidateId and not self.leaderElected:
@@ -184,7 +200,8 @@ class Server:
             print("elected node")
             self.currentState="follower"
             self.leaderElected=True
-            self.timeout=int(os.environ['timeout'])
+            # self.timeout=int(os.environ['timeout'])
+
         # if 'heartbeat' in 
         # if 'sender_name' in msg and msg['sender_name']=='Controller':
         #     self.currentState="Follower"
