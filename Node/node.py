@@ -60,23 +60,8 @@ class Server:
             # Decoding the Message received from Node 1
             decoded_msg = json.loads(msg.decode('utf-8'))
             print("listner ",decoded_msg)
-            # self.process_msgs(decoded_msg)
+            self.process_msgs(decoded_msg)
             
-            if len(decoded_msg)==0:
-                self.timeout-=1
-                print("hello",self.timeout)
-                # msg_bytes = json.dumps(msg).encode()
-                try:
-                    self.UDP_Socket.sendto(msg, (os.environ['target1'], 5555))
-                    self.UDP_Socket.sendto(msg, (os.environ['target2'], 5555))
-                    print("sending to  "+os.environ['target1']+" and "+os.environ['target2'])
-                except:
-                    print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-                if self.timeout<=0:
-                    self.process_msgs({'startElection':True})
-            else:
-                self.timeout=int(os.environ['timeout'])
-                self.process_msgs(decoded_msg)
 
             # print(f"Message Received : {decoded_msg} From : {addr}")
 
@@ -132,39 +117,39 @@ class Server:
                 print("elected leader and intimating to "+os.environ['target1']+" and "+os.environ['target2']+ " and the current state is"+self.currentState)
             except:
                  print(f"ERROR while fetching from socket : {traceback.print_exc()}")
-        else:
-            msg_bytes = json.dumps(msg).encode()
-            try:
-                self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
-                self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
-                print("sending  "+os.environ['target1']+" and "+os.environ['target2'])
-            except:
-                 print(f"ERROR while fetching from socket : {traceback.print_exc()}")
+        # else:
+        #     msg_bytes = json.dumps(msg).encode()
+        #     try:
+        #         self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
+        #         self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
+        #         print("sending  "+os.environ['target1']+" and "+os.environ['target2'])
+        #     except:
+        #          print(f"ERROR while fetching from socket : {traceback.print_exc()}")
 
 
     def process_msgs(self,msg):
         print(msg)
         # print(self.timeout,msg)
-        # while self.timeout>0 and self.currentState!='leader':
-        #     # print(msg," indide while of process_msgs block")
-        #     try:
-        #         msg, addr = self.UDP_Socket.recvfrom(1024)
-        #     except:
-        #         print(f"ERROR while fetching from socket : {traceback.print_exc()}")
+        while self.timeout>0 and self.currentState!='leader':
+            # print(msg," indide while of process_msgs block")
+            try:
+                msg, addr = self.UDP_Socket.recvfrom(1024)
+            except:
+                print(f"ERROR while fetching from socket : {traceback.print_exc()}")
 
-        #     # # Decoding the Message received from Node 1
-        #     decoded_msg = json.loads(msg.decode('utf-8'))
-        #     print(decoded_msg," indide while of process_msgs block")
-        #     if len(msg)!=0:
-        #         self.timeout=int(os.environ['timeout'])
-        #         # print(msg)
-        #         break
-        #     else:
-        #         self.timeout-=1
-        #         # self.listener()
+            # Decoding the Message received from Node 1
+            decoded_msg = json.loads(msg.decode('utf-8'))
+            print(decoded_msg," indide while of process_msgs block")
+            if len(decoded_msg)!=0:
+                self.timeout=int(os.environ['timeout'])
+                # print(msg)
+                break
+            else:
+                self.timeout-=1
+                # self.listener()
                 
         # if self.timeout==0 and len(msg)==0 and 'Term' not in msg and 'votedFor' not in msg and 'Elected_leader' not in msg:
-        if self.timeout==0 and not self.sentVoteRequest:
+        if self.timeout<=0 and not self.sentVoteRequest:
             print("changing state to candidate")
             self.currentTerm+=1
             self.currentState="candidate"
