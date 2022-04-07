@@ -15,6 +15,8 @@
       - sender=${sender:-node1}
       - target1=${target1:-node2}
       - target2=${target2:-node3}
+      - target3=${target3:-node4}
+      - target4=${target4:-node5}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
       - timeout=${timeout:-297}
@@ -26,6 +28,8 @@
       - sender=${sender:-node2}
       - target1=${target1:-node1}
       - target2=${target2:-node3}
+      - target3=${target3:-node4}
+      - target4=${target4:-node5}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
       - timeout=${timeout:-4000}
@@ -37,9 +41,37 @@
       - sender=${sender:-node3}
       - target1=${target1:-node1}
       - target2=${target2:-node2}
+      - target3=${target3:-node4}
+      - target4=${target4:-node5}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
       - timeout=${timeout:-5000}
+   node4:
+     container_name : Node4
+     build: Node/.
+     environment:
+      # - leader=${leader:-False}
+      - sender=${sender:-node4}
+      - target1=${target1:-node1}
+      - target2=${target2:-node2}
+      - target3=${target3:-node3}
+      - target4=${target4:-node5}
+      # - target3=${target3:-node4}
+      # - target4=${target4:-node5}
+      - timeout=${timeout:-6000}
+   node5:
+     container_name : Node5
+     build: Node/.
+     environment:
+      # - leader=${leader:-False}
+      - sender=${sender:-node5}
+      - target1=${target1:-node1}
+      - target2=${target2:-node2}
+      - target3=${target3:-node3}
+      - target4=${target4:-node4}
+      # - target3=${target3:-node4}
+      # - target4=${target4:-node5}
+      - timeout=${timeout:-7000}
 
 
    #Do not change the part below

@@ -65,6 +65,8 @@ class Server:
                 try:
                     self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
                     self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
+                    self.UDP_Socket.sendto(msg_bytes, (os.environ['target3'], 5555))
+                    self.UDP_Socket.sendto(msg_bytes, (os.environ['target4'], 5555))
                 except:
                      print(f"ERROR while fetching from socket : {traceback.print_exc()}")
         elif self.currentState=="candidate" and ('Term' in msg):
@@ -73,7 +75,9 @@ class Server:
             try:
                 self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
                 self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
-                print("Send Vote request to "+os.environ['target1']+" and "+os.environ['target2']+ " and", msg)
+                self.UDP_Socket.sendto(msg_bytes, (os.environ['target3'], 5555))
+                self.UDP_Socket.sendto(msg_bytes, (os.environ['target4'], 5555))
+                print("Send Vote request to "+os.environ['target1']+" and "+os.environ['target2']+ " and " + os.environ['target3'] + " and " +os.environ['target4'] + " and", msg)
             except:
                  print(f"ERROR while fetching from socket : {traceback.print_exc()}")
         
@@ -92,7 +96,9 @@ class Server:
             try:
                 self.UDP_Socket.sendto(msg_bytes, (os.environ['target1'], 5555))
                 self.UDP_Socket.sendto(msg_bytes, (os.environ['target2'], 5555))
-                print("elected leader and intimating to "+os.environ['target1']+" and "+os.environ['target2']+ " and the current state is"+self.currentState)
+                self.UDP_Socket.sendto(msg_bytes, (os.environ['target3'], 5555))
+                self.UDP_Socket.sendto(msg_bytes, (os.environ['target4'], 5555))
+                print("elected leader and intimating to "+os.environ['target1']+" and "+os.environ['target2']+" and "+os.environ['target3']+" and "+os.environ['target4']+ " and the current state is"+self.currentState)
             except:
                  print(f"ERROR while fetching from socket : {traceback.print_exc()}")
             self.appendRPC({})
