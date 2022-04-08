@@ -17,6 +17,7 @@
       - target2=${target2:-node3}
       - target3=${target3:-node4}
       - target4=${target4:-node5}
+      - targetcon=${targetcon:-controller}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
       - timeout=${timeout:-297}
@@ -30,9 +31,10 @@
       - target2=${target2:-node3}
       - target3=${target3:-node4}
       - target4=${target4:-node5}
+      - targetcon=${targetcon:-controller}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-4000}
+      - timeout=${timeout:-325}
    node3:
      container_name : Node3
      build: Node/.
@@ -43,9 +45,10 @@
       - target2=${target2:-node2}
       - target3=${target3:-node4}
       - target4=${target4:-node5}
+      - targetcon=${targetcon:-controller}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-5000}
+      - timeout=${timeout:-350}
    node4:
      container_name : Node4
      build: Node/.
@@ -56,9 +59,10 @@
       - target2=${target2:-node2}
       - target3=${target3:-node3}
       - target4=${target4:-node5}
+      - targetcon=${targetcon:-controller}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-6000}
+      - timeout=${timeout:-375}
    node5:
      container_name : Node5
      build: Node/.
@@ -69,9 +73,10 @@
       - target2=${target2:-node2}
       - target3=${target3:-node3}
       - target4=${target4:-node4}
+      - targetcon=${targetcon:-controller}
       # - target3=${target3:-node4}
       # - target4=${target4:-node5}
-      - timeout=${timeout:-7000}
+      - timeout=${timeout:-400}
 
 
    #Do not change the part below
@@ -79,6 +84,9 @@
        container_name: Controller
        build: Controller/.
        stdin_open: true
+       environment:
+      # - leader=${leader:-False}
+       - sender=${sender:-controller}
 
 
 
